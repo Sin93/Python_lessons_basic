@@ -1,9 +1,24 @@
+
+__author__ = 'Зиновьев Максим Игоревич'
+
+import datetime
+
 # Задание-1: уравнение прямой вида y = kx + b задано в виде строки.
 # Определить координату y точки с заданной координатой x.
 
-equation = 'y = -12x + 11111140.2121'
-x = 2.5
-# вычислите и выведите y
+# Я напишу программу строго по условию, то-есть уравнение всегда задаётся по шаблону, шаг впрао, шаг в лево и fatalError
+# при необходимости можно накрутить проверок, но на 2 и 3 задание ушло слишком много сил
+
+# y = -12x + 11111140.2121
+# x = 2.5
+
+equation = input('1. Введите уравнение прямой: ')
+posX = equation.find('x')
+k = float(equation[4:posX])
+b = float(equation[posX + 4:])
+x = float(input('Введите кординату x: '))
+y = k * x + b
+print('Кордината y: ', y)
 
 
 # Задание-2: Дата задана в виде строки формата 'dd.mm.yyyy'.
@@ -17,12 +32,28 @@ x = 2.5
 #  (т.е. 2 символа для дня, 2 - для месяца, 4 - для года)
 
 # Пример корректной даты
-date = '01.11.1985'
+#date = '01.11.1985'
 
 # Примеры некорректных дат
-date = '01.22.1001'
-date = '1.12.1001'
-date = '-2.10.3001'
+#date = '01.22.1001'
+#date = '1.12.1001'
+#date = '-2.10.3001'
+
+while True:
+    userAnswer = input('Введите дату')
+    if userAnswer.find('.') != 2:
+        print('Ошибочный формат даты, введите dd.mm.yyyy')
+        continue
+    elif userAnswer.rfind('.') != 5:
+        print('Ошибочный формат даты, введите dd.mm.yyyy')
+        continue
+    try:
+        date = datetime.datetime.strptime(userAnswer, '%d.%m.%Y')
+        print('Дата: ', date, 'корректна')
+        break
+    except ValueError:
+        print('Введена не корректная дата! Введите dd.mm.yyyy')
+        continue
 
 
 # Задание-3: "Перевёрнутая башня" (Задача олимпиадного уровня)
@@ -54,3 +85,36 @@ date = '-2.10.3001'
 #
 # Вход: 11
 # Выход: 5 3
+
+room = int(input('''\n3. Вы стоите у лифта странной башни, вам известен номер комнаты, в которую вам надо, 
+но вы не знаете на каком она этаже.
+Эта программа поможет вам сориентироваться в башне. Введите номер комнаты: '''))
+# количество комнат нам пригодится в нескольких вычислениях, по этому сохраню его в ещё одной переменной
+n = room
+roomsBefore = 0
+bloc = 0
+
+# определяем количество комнат до интересующего нас блока
+while n > 0:
+    bloc += 1
+    n = n - bloc**2
+    roomsBefore = roomsBefore + bloc**2
+roomsBefore = roomsBefore - bloc**2
+
+# определим номер этажа в блоке
+numberInBloc = room - roomsBefore
+floorInBloc = 1
+while numberInBloc > bloc:
+    floorInBloc += 1
+    numberInBloc = numberInBloc - bloc
+
+# определим номер этажа в башне
+floorInTower = 0
+while bloc > 0:
+    floorInTower = floorInTower + (bloc - 1)
+    bloc -= 1
+floor = floorInTower + floorInBloc
+print('Этаж: ', floor)
+print('Номер комнаты слева на право: ', numberInBloc)
+
+
