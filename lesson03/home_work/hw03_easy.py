@@ -5,13 +5,15 @@
 # Для решения задачи не используйте встроенные функции и функции из модуля math.
 
 def my_round(number, ndigits):
-    pass
-
+    a = int(number * (10 ** ndigits))
+    if int(number * 10 ** (ndigits + 1) / 10) < 5:
+        return a / (10 ** ndigits)
+    else:
+        return (a + 1) / (10 ** ndigits)
 
 print(my_round(2.1234567, 5))
 print(my_round(2.1999967, 5))
 print(my_round(2.9999967, 5))
-
 
 # Задание-2:
 # Дан шестизначный номер билета. Определить, является ли билет счастливым.
@@ -19,9 +21,19 @@ print(my_round(2.9999967, 5))
 # Билет считается счастливым, если сумма его первых и последних цифр равны.
 # !!!P.S.: функция не должна НИЧЕГО print'ить
 
+# такое решение конечно очень не универсальное, но если по условию номер билета строго 6-тизначный, то будет работать
 def lucky_ticket(ticket_number):
-    pass
-
+    if ticket_number > 99999 and ticket_number < 1000000:
+        half1 = int(ticket_number // 1000)
+        sum1 = half1 % 10 + half1 % 100 // 10 + half1 // 100
+        half2 = int(ticket_number % 1000)
+        sum2 = half2 % 10 + half2 % 100 // 10 + half2 // 100
+        if sum1 == sum2:
+            return 'Билет счастливый'
+        else:
+            return 'Билет не счастливый'
+    else:
+        return 'Не корректный номер билета'
 
 print(lucky_ticket(123006))
 print(lucky_ticket(12321))
