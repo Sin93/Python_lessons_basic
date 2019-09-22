@@ -33,7 +33,7 @@ class Human:
             self.surname = father.surname
             self.patr_name = father.name
         else:
-            self.surname = surname or 'Неизвестна'
+            self.surname = surname or 'Найден'
             self.patr_name = 'Иван'
         self.father = father
         self.mother = mother
@@ -72,22 +72,94 @@ class Student(Human):
     def get_parrents(self):
         return list(map(str, (self.father, self.mother)))
 
+
 class SchoolClass:
+    school = None
+    __teachers = []
+    __students = []
+
+    def __init__(self, name):
+        self.name = name
+
+    @property
+    def teachers(self):
+        return self.__teachers
+
+    def add_teacher(self, teacher: Teacher):
+        self.__teachers.append(teacher)
+        teacher.sh_class.append(self)
+
+    @property
+    def students(self):
+        return list(map(str, self.__students))
+
+    def add_student(self, student: Student):
+        self.__students.append(student)
+        student.sh_class = self
 
 
 class School:
+    __students = []
+    __teachers = []
+    __sh_class = []
+    __sh_number = int()
+
+    def __init__(self, sh_number: int):
+        """
+        Класс школы, при создании указать номер школы
+        :param sh_number: int
+        """
+        self.__sh_number = sh_number
+        self.gen_class()
+
+    @property
+    def students(self):
+        return self.__students
+
+    def add_student(self, student: Student):
+        random.choice(self.__sh_class).add_student(student)
+        self.__students.append(student)
+
+    @property
+    def teachers(self):
+        return self.__teachers
+
+    def add_teacher(self, teacher: Teacher):
+        # todo Надо проверить является ли учитель классом Teacher
+        for clss in self.__sh_class:
+            if teacher.subject not in [itm.subject for itm in clss.teachers]:
+                clss.add_teacher(teacher)
+                break
+        self.__teachers.append(teacher)
+
+    def add_sh_class(self, sh_class: SchoolClass):
+        # todo Проверить соответсвие типов
+        sh_class.school = self
+        self.__sh_class.append(sh_class)
+
+    def gen_class(self):
+        s_classes = ['5A', '6B', '7G', '8D']
+        self.__sh_class = [SchoolClass(name) for name in s_classes]
+
+    @property
+    def sh_cls(self):
+        return self.__sh_class
+
 
 if __name__ == '__main__':
+
     names = ['Иван', 'Филипп', 'Анатолий', 'Анна', 'Мария', 'Тамара']
     surnames = ['Сидоров', 'Антуанет', 'Питонов', 'Иванов', 'Джобс']
-    subjects_lst = ['математика', 'геометрия', 'Ин-яз', 'Физ-ра', 'Информатика']
-    humans = [Human(name=random.choice(names), surname=random.choice(surnames))]
+
+    subjects_lst = [Subject(itm) for itm in ['математика', 'геометрия', 'Ин-яз', 'Физ-ра', 'Информатика']]
+
+    humans = [Human(name=random.choice(names), surname=random.choice(surnames)) for itm in range(20)]
 
     students = []
-
-    for _ in range(5):
+    for _ in range(20):
         fat = random.choice(humans)
         mather = random.choice(humans)
+
         student = Student(name=random.choice(names), father=fat, mother=mather)
         students.append(student)
 
@@ -98,5 +170,15 @@ if __name__ == '__main__':
         mather = random.choice(humans)
         teacher = Teacher(name=random.choice(names), father=fat, mother=mather, subject=random.choice(subjects_lst))
         teachers.append(teacher)
+    school = School(1)
 
+    # _ = [school.add_teacher(teacher) for teacher in teachers]
 
+    list(map(school.add_teacher, teachers))
+    list(map(school.add_student, students))
+    print(1)
+    print(school.sh_cls)
+    print(2)
+    print(school.sh_cls[0].students)
+    print(3)
+    print(school.students[0].get_subjects)
